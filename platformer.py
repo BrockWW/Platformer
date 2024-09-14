@@ -6,7 +6,7 @@ class Character(pg.sprite.Sprite):
         self.image, self.rect = self.load_image("images/t_louis.jpg", 0.5, -1)
         screen = pg.display.get_surface()
         self.area = screen.get_rect()
-        self.rect.bottomleft = 0, screen_size[1]-50+self.rect[0]
+        self.rect.bottomleft = 100, screen_size[1]-50+self.rect[0]
         self.move = 18
         self.jump = False
         self.velocity = 0
@@ -25,16 +25,16 @@ class Character(pg.sprite.Sprite):
         return image, image.get_rect()
     
     def move_character(self, keys, level):
+        # initialize position and movement each update
         newpos = self.rect.move((self.move, 0))
         movement = [0,0]
 
         # check out of bounds
         if self.rect.bottom >= level.background.get_height()-5:
+            # reset louis location
             self.rect.bottomleft = 0, screen_size[1]-50+self.rect[0]
-            
+            # reload the level
             level.level_one()
-
-            
 
         # else continue motion
         else:
@@ -46,11 +46,12 @@ class Character(pg.sprite.Sprite):
             elif level.background.get_at(self.rect.midbottom) == (255,255,255):
                 self.velocity = 0
                 self.jump = False
-
+            # jump
             if keys[pg.K_w] and self.jump == False:
                 self.velocity = -30
                 self.jump = True
 
+            # move louis
             movement[1] += self.velocity
             newpos = self.rect.move(movement)
             self.rect = newpos
@@ -80,100 +81,63 @@ class Level:
         self.background = pg.Surface(self.screen_size)
         self.background.fill("black")
         self.platforms = []
-        self.drawn_plats = []
 
         # plat 1
-        self.plat_1_ul = pg.Vector2(0, self.screen_size[1]-50)
-        self.plat_1_ur = pg.Vector2(500, self.screen_size[1]-50)
-        self.plat_1_br = pg.Vector2(500, self.screen_size[1])
-        self.plat_1_bl = pg.Vector2(0, self.screen_size[1])
-
-        self.plat_1 = [self.plat_1_ul, self.plat_1_ur, self.plat_1_br, self.plat_1_bl]
+        self.plat_1 = self.create_vectors([20, 500, self.screen_size[1]-50, self.screen_size[1]])
         self.platforms.append(self.plat_1)
 
         # plat 2
-        self.plat_2_ul = pg.Vector2(800, self.screen_size[1]-200)
-        self.plat_2_ur = pg.Vector2(2000, self.screen_size[1]-200)
-        self.plat_2_br = pg.Vector2(2000, self.screen_size[1]-100)
-        self.plat_2_bl = pg.Vector2(800, self.screen_size[1]-100)
-
-        self.plat_2 = [self.plat_2_ul, self.plat_2_ur, self.plat_2_br, self.plat_2_bl]
+        self.plat_2 = self.create_vectors([800, 2000, self.screen_size[1]-200, self.screen_size[1]-150])
         self.platforms.append(self.plat_2)
 
         # plat 3
-        self.plat_3_ul = pg.Vector2(0, self.screen_size[1]-500)
-        self.plat_3_ur = pg.Vector2(500, self.screen_size[1]-500)
-        self.plat_3_br = pg.Vector2(500, self.screen_size[1]-450)
-        self.plat_3_bl = pg.Vector2(0, self.screen_size[1]-450)
-
-        self.plat_3 = [self.plat_3_ul, self.plat_3_ur, self.plat_3_br, self.plat_3_bl]
+        self.plat_3 = self.create_vectors([20, 500, self.screen_size[1]-450, self.screen_size[1]-500])
         self.platforms.append(self.plat_3)
 
         # plat 4
-        self.plat_4_ul = pg.Vector2(800, self.screen_size[1]-500)
-        self.plat_4_ur = pg.Vector2(1400, self.screen_size[1]-500)
-        self.plat_4_br = pg.Vector2(1400, self.screen_size[1]-450)
-        self.plat_4_bl = pg.Vector2(800, self.screen_size[1]-450)
-
-        self.plat_4 = [self.plat_4_ul, self.plat_4_ur, self.plat_4_br, self.plat_4_bl]
+        self.plat_4 = self.create_vectors([800, 1400, self.screen_size[1]-500, self.screen_size[1]-450])
         self.platforms.append(self.plat_4)
 
         # plat 5
-        self.plat_5_ul = pg.Vector2(1700, self.screen_size[1]-500)
-        self.plat_5_ur = pg.Vector2(2000, self.screen_size[1]-500)
-        self.plat_5_br = pg.Vector2(2000, self.screen_size[1]-450)
-        self.plat_5_bl = pg.Vector2(1700, self.screen_size[1]-450)
-
-        self.plat_5 = [self.plat_5_ul, self.plat_5_ur, self.plat_5_br, self.plat_5_bl]
+        self.plat_5 = self.create_vectors([1700, 2000, self.screen_size[1]-500, self.screen_size[1]-450])
         self.platforms.append(self.plat_5)
 
         # plat 6
-        self.plat_6_ul = pg.Vector2(2000, self.screen_size[1]-200)
-        self.plat_6_ur = pg.Vector2(3000, self.screen_size[1]-200)
-        self.plat_6_br = pg.Vector2(3000, self.screen_size[1]-150)
-        self.plat_6_bl = pg.Vector2(2000, self.screen_size[1]-150)
-
-        self.plat_6 = [self.plat_6_ul, self.plat_6_ur, self.plat_6_br, self.plat_6_bl]
+        self.plat_6 = self.create_vectors([2000, 3000, self.screen_size[1]-200, self.screen_size[1]-150])
         self.platforms.append(self.plat_6)
-
-        # saving original positions of platforms
-        #self.original_positions = self.platforms.copy()
-
 
         # creating platforms 
         self.draw_platforms()
-
-        '''# creating platforms 
-        # plat 1
-        pg.draw.polygon(self.background, "white", [(0, self.screen_size[1]-50), (500, self.screen_size[1]-50), (500,self.screen_size[1]), (0,self.screen_size[1])])
-        # plat 2
-        pg.draw.polygon(self.background, "white", [(800, self.screen_size[1]-200), (2000, self.screen_size[1]-200), (2000,self.screen_size[1]-100), (800,self.screen_size[1]-100)])
-        # plat 3
-        pg.draw.polygon(self.background, "white", [(0, self.screen_size[1]-500), (500, self.screen_size[1]-500), (500,self.screen_size[1]-450), (0,self.screen_size[1]-450)])
-        # plat 4
-        pg.draw.polygon(self.background, "white", [(800, self.screen_size[1]-500), (1400, self.screen_size[1]-500), (1400,self.screen_size[1]-450), (800,self.screen_size[1]-450)])
-        # plat 5
-        pg.draw.polygon(self.background, "white", [(1700, self.screen_size[1]-500), (2000, self.screen_size[1]-500), (2000,self.screen_size[1]-450), (1700,self.screen_size[1]-450)])
-        # plat 5
-        pg.draw.polygon(self.background, "white", [(2000, self.screen_size[1]-200), (3000, self.screen_size[1]-200), (3000,self.screen_size[1]-150), (200,self.screen_size[1]-150)])'''
 
     def draw_platforms(self):
         self.background.fill("black")
         for platform in self.platforms:
             pg.draw.polygon(self.background, "white", platform)
 
+    def create_vectors(self, corners):
+        x_0, x_1, y_0, y_1 = corners
+        ul = pg.Vector2(x_0, y_1)
+        ur = pg.Vector2(x_1, y_1)
+        br = pg.Vector2(x_1, y_0)
+        bl = pg.Vector2(x_0, y_0)
+
+        return [ul,ur,br,bl]
+
+
 
 class GameEnvironment:
-    def __init__(self, screen_size):
+    def __init__(self, screen_size, music):
         self.level = Level(screen_size)
         self.character = Character(screen_size)
+        self.music = music
 
     def run_game(self):
         # pygame setup
         clock = pg.time.Clock()
         allsprites = pg.sprite.RenderPlain(self.character)
-        #pg.mixer.music.load("music/goofy_ahh.mp3")
-        #pg.mixer.music.play(loops=-1)
+        if self.music == True:
+            pg.mixer.music.load("music/goofy_ahh.mp3")
+            pg.mixer.music.play(loops=-1)
         running = True
 
         # creating level
@@ -212,6 +176,6 @@ pg.init()
 pg.font.init()
 pg.display.init()
 
-screen_size = [2000, 1000]
-platformer = GameEnvironment(screen_size)
+screen_size = [2000, 1200]
+platformer = GameEnvironment(screen_size, False)
 platformer.run_game()
