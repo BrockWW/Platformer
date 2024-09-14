@@ -31,6 +31,10 @@ class Character(pg.sprite.Sprite):
         # check out of bounds
         if self.rect.bottom >= level.background.get_height()-5:
             self.rect.bottomleft = 0, screen_size[1]-50+self.rect[0]
+            
+            level.level_one()
+
+            
 
         # else continue motion
         else:
@@ -46,10 +50,6 @@ class Character(pg.sprite.Sprite):
             if keys[pg.K_w] and self.jump == False:
                 self.velocity = -30
                 self.jump = True
-            if keys[pg.K_a]:
-                movement = [-10, 0]
-            if keys[pg.K_d]:
-                movement = [10, 0]
 
             movement[1] += self.velocity
             newpos = self.rect.move(movement)
@@ -61,12 +61,89 @@ class Level:
         self.screen_size = screen_size
         self.level_one()
 
+    def move_level(self, keys):
+        screen_move = pg.Vector2(0,0)
+        if keys[pg.K_a]:
+            screen_move = pg.Vector2(10,0)
+        if keys[pg.K_d]:
+            screen_move = pg.Vector2(-10,0)
+
+        for i in range(len(self.platforms)):
+            for j in range(len(self.platforms[i])):
+                self.platforms[i][j] += screen_move
+
+        self.draw_platforms()
+                
+
     def level_one(self):
         self.screen = pg.display.set_mode(self.screen_size)
         self.background = pg.Surface(self.screen_size)
         self.background.fill("black")
+        self.platforms = []
+        self.drawn_plats = []
+
+        # plat 1
+        self.plat_1_ul = pg.Vector2(0, self.screen_size[1]-50)
+        self.plat_1_ur = pg.Vector2(500, self.screen_size[1]-50)
+        self.plat_1_br = pg.Vector2(500, self.screen_size[1])
+        self.plat_1_bl = pg.Vector2(0, self.screen_size[1])
+
+        self.plat_1 = [self.plat_1_ul, self.plat_1_ur, self.plat_1_br, self.plat_1_bl]
+        self.platforms.append(self.plat_1)
+
+        # plat 2
+        self.plat_2_ul = pg.Vector2(800, self.screen_size[1]-200)
+        self.plat_2_ur = pg.Vector2(2000, self.screen_size[1]-200)
+        self.plat_2_br = pg.Vector2(2000, self.screen_size[1]-100)
+        self.plat_2_bl = pg.Vector2(800, self.screen_size[1]-100)
+
+        self.plat_2 = [self.plat_2_ul, self.plat_2_ur, self.plat_2_br, self.plat_2_bl]
+        self.platforms.append(self.plat_2)
+
+        # plat 3
+        self.plat_3_ul = pg.Vector2(0, self.screen_size[1]-500)
+        self.plat_3_ur = pg.Vector2(500, self.screen_size[1]-500)
+        self.plat_3_br = pg.Vector2(500, self.screen_size[1]-450)
+        self.plat_3_bl = pg.Vector2(0, self.screen_size[1]-450)
+
+        self.plat_3 = [self.plat_3_ul, self.plat_3_ur, self.plat_3_br, self.plat_3_bl]
+        self.platforms.append(self.plat_3)
+
+        # plat 4
+        self.plat_4_ul = pg.Vector2(800, self.screen_size[1]-500)
+        self.plat_4_ur = pg.Vector2(1400, self.screen_size[1]-500)
+        self.plat_4_br = pg.Vector2(1400, self.screen_size[1]-450)
+        self.plat_4_bl = pg.Vector2(800, self.screen_size[1]-450)
+
+        self.plat_4 = [self.plat_4_ul, self.plat_4_ur, self.plat_4_br, self.plat_4_bl]
+        self.platforms.append(self.plat_4)
+
+        # plat 5
+        self.plat_5_ul = pg.Vector2(1700, self.screen_size[1]-500)
+        self.plat_5_ur = pg.Vector2(2000, self.screen_size[1]-500)
+        self.plat_5_br = pg.Vector2(2000, self.screen_size[1]-450)
+        self.plat_5_bl = pg.Vector2(1700, self.screen_size[1]-450)
+
+        self.plat_5 = [self.plat_5_ul, self.plat_5_ur, self.plat_5_br, self.plat_5_bl]
+        self.platforms.append(self.plat_5)
+
+        # plat 6
+        self.plat_6_ul = pg.Vector2(2000, self.screen_size[1]-200)
+        self.plat_6_ur = pg.Vector2(3000, self.screen_size[1]-200)
+        self.plat_6_br = pg.Vector2(3000, self.screen_size[1]-150)
+        self.plat_6_bl = pg.Vector2(2000, self.screen_size[1]-150)
+
+        self.plat_6 = [self.plat_6_ul, self.plat_6_ur, self.plat_6_br, self.plat_6_bl]
+        self.platforms.append(self.plat_6)
+
+        # saving original positions of platforms
+        #self.original_positions = self.platforms.copy()
+
 
         # creating platforms 
+        self.draw_platforms()
+
+        '''# creating platforms 
         # plat 1
         pg.draw.polygon(self.background, "white", [(0, self.screen_size[1]-50), (500, self.screen_size[1]-50), (500,self.screen_size[1]), (0,self.screen_size[1])])
         # plat 2
@@ -77,6 +154,13 @@ class Level:
         pg.draw.polygon(self.background, "white", [(800, self.screen_size[1]-500), (1400, self.screen_size[1]-500), (1400,self.screen_size[1]-450), (800,self.screen_size[1]-450)])
         # plat 5
         pg.draw.polygon(self.background, "white", [(1700, self.screen_size[1]-500), (2000, self.screen_size[1]-500), (2000,self.screen_size[1]-450), (1700,self.screen_size[1]-450)])
+        # plat 5
+        pg.draw.polygon(self.background, "white", [(2000, self.screen_size[1]-200), (3000, self.screen_size[1]-200), (3000,self.screen_size[1]-150), (200,self.screen_size[1]-150)])'''
+
+    def draw_platforms(self):
+        self.background.fill("black")
+        for platform in self.platforms:
+            pg.draw.polygon(self.background, "white", platform)
 
 
 class GameEnvironment:
@@ -88,8 +172,8 @@ class GameEnvironment:
         # pygame setup
         clock = pg.time.Clock()
         allsprites = pg.sprite.RenderPlain(self.character)
-        pg.mixer.music.load("music/goofy_ahh.mp3")
-        pg.mixer.music.play(loops=-1)
+        #pg.mixer.music.load("music/goofy_ahh.mp3")
+        #pg.mixer.music.play(loops=-1)
         running = True
 
         # creating level
@@ -112,6 +196,7 @@ class GameEnvironment:
             allsprites.draw(self.level.screen)
             
             self.character.move_character(keys, self.level)
+            self.level.move_level(keys)
 
             # flip() the display to put your work on screen
             pg.display.flip()
