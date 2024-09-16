@@ -32,7 +32,7 @@ class Character(pg.sprite.Sprite):
         # check out of bounds
         if self.rect.bottom >= level.background.get_height()-5:
             # reset louis location
-            self.rect.bottomleft = 0, screen_size[1]-50+self.rect[0]
+            self.rect.bottomleft = 100, screen_size[1]-50+self.rect[0]
             # reload the level
             level.level_one()
 
@@ -82,29 +82,18 @@ class Level:
         self.background.fill("black")
         self.platforms = []
 
-        # plat 1
-        self.plat_1 = self.create_vectors([20, 500, self.screen_size[1]-50, self.screen_size[1]])
-        self.platforms.append(self.plat_1)
+        #############################
+        # building platforms of level
 
-        # plat 2
-        self.plat_2 = self.create_vectors([800, 2000, self.screen_size[1]-200, self.screen_size[1]-150])
-        self.platforms.append(self.plat_2)
+        self.platforms.append(self.create_vectors([20, 500, self.screen_size[1]-50, self.screen_size[1]]))
+        self.platforms.append(self.create_vectors([800, 2000, self.screen_size[1]-200, self.screen_size[1]-150]))
+        self.platforms.append(self.create_vectors([20, 500, self.screen_size[1]-450, self.screen_size[1]-500]))
+        self.platforms.append(self.create_vectors([800, 1400, self.screen_size[1]-500, self.screen_size[1]-450]))
+        self.platforms.append(self.create_vectors([1700, 2000, self.screen_size[1]-500, self.screen_size[1]-450]))
+        self.platforms.append(self.create_vectors([2000, 3000, self.screen_size[1]-200, self.screen_size[1]-150]))
+        self.platforms.append(self.create_vectors([3500, 3700, self.screen_size[1]-100, self.screen_size[1]-50]))
 
-        # plat 3
-        self.plat_3 = self.create_vectors([20, 500, self.screen_size[1]-450, self.screen_size[1]-500])
-        self.platforms.append(self.plat_3)
-
-        # plat 4
-        self.plat_4 = self.create_vectors([800, 1400, self.screen_size[1]-500, self.screen_size[1]-450])
-        self.platforms.append(self.plat_4)
-
-        # plat 5
-        self.plat_5 = self.create_vectors([1700, 2000, self.screen_size[1]-500, self.screen_size[1]-450])
-        self.platforms.append(self.plat_5)
-
-        # plat 6
-        self.plat_6 = self.create_vectors([2000, 3000, self.screen_size[1]-200, self.screen_size[1]-150])
-        self.platforms.append(self.plat_6)
+        #############################
 
         # creating platforms 
         self.draw_platforms()
