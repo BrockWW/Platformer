@@ -6,7 +6,7 @@ class Character(pg.sprite.Sprite):
         self.image, self.rect = self.load_image("images/t_louis.jpg", 0.5, -1)
         screen = pg.display.get_surface()
         self.area = screen.get_rect()
-        self.rect.bottomleft = 100, screen_size[1]-50+self.rect[0]
+        self.rect.bottomleft = 10, screen_size[1]-50+self.rect[0]
         self.move = 18
         self.jump = False
         self.velocity = 0
@@ -31,10 +31,10 @@ class Character(pg.sprite.Sprite):
 
         # check out of bounds
         if self.rect.bottom >= level.background.get_height()-5:
-            # reset louis location
-            self.rect.bottomleft = 100, screen_size[1]-50+self.rect[0]
             # reload the level
             level.level_one()
+            # reset louis location
+            self.rect.bottomleft = 10, screen_size[1]-50+self.rect[0]
 
         # else continue motion
         else:
@@ -50,6 +50,11 @@ class Character(pg.sprite.Sprite):
             if keys[pg.K_w] and self.jump == False:
                 self.velocity = -30
                 self.jump = True
+            # move until half way across screen, then allow backward motion to left edge of screen
+            if self.rect.right < level.screen_size[0]//2 and keys[pg.K_d]:
+                movement = [10, 0]
+            if self.rect.left >= 5 and keys[pg.K_a]:
+                movement = [-10, 0]
 
             # move louis
             movement[1] += self.velocity
@@ -62,11 +67,9 @@ class Level:
         self.screen_size = screen_size
         self.level_one()
 
-    def move_level(self, keys):
+    def move_level(self, keys, character):
         screen_move = pg.Vector2(0,0)
-        if keys[pg.K_a]:
-            screen_move = pg.Vector2(10,0)
-        if keys[pg.K_d]:
+        if keys[pg.K_d] and character.rect.right >= screen_size[0]//2:
             screen_move = pg.Vector2(-10,0)
 
         for i in range(len(self.platforms)):
@@ -87,7 +90,6 @@ class Level:
 
         self.platforms.append(self.create_vectors([20, 500, self.screen_size[1]-50, self.screen_size[1]]))
         self.platforms.append(self.create_vectors([800, 2000, self.screen_size[1]-200, self.screen_size[1]-150]))
-        self.platforms.append(self.create_vectors([20, 500, self.screen_size[1]-450, self.screen_size[1]-500]))
         self.platforms.append(self.create_vectors([800, 1400, self.screen_size[1]-500, self.screen_size[1]-450]))
         self.platforms.append(self.create_vectors([1700, 2000, self.screen_size[1]-500, self.screen_size[1]-450]))
         self.platforms.append(self.create_vectors([2000, 3000, self.screen_size[1]-200, self.screen_size[1]-150]))
@@ -149,7 +151,7 @@ class GameEnvironment:
             allsprites.draw(self.level.screen)
             
             self.character.move_character(keys, self.level)
-            self.level.move_level(keys)
+            self.level.move_level(keys, self.character)
 
             # flip() the display to put your work on screen
             pg.display.flip()
